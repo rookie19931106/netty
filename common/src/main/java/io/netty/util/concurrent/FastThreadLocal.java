@@ -144,6 +144,19 @@ public class FastThreadLocal<V> {
         return value;
     }
 
+    /**
+     * Returns the current value for the current thread if it exists, {@code null} otherwise.
+     */
+    @SuppressWarnings("unchecked")
+    public final V getIfExists() {
+        InternalThreadLocalMap threadLocalMap = InternalThreadLocalMap.get();
+        Object v = threadLocalMap.indexedVariable(index);
+        if (v != InternalThreadLocalMap.UNSET) {
+            return (V) v;
+        }
+        return null;
+    }
+
     private void registerCleaner(final InternalThreadLocalMap threadLocalMap) {
         Thread current = Thread.currentThread();
         if (FastThreadLocalThread.willCleanupFastThreadLocals(current) || threadLocalMap.isCleanerFlagSet(index)) {
